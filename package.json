@@ -12,6 +12,7 @@
     "electron": "^27.1.2"
   },
   "dependencies": {
+    "mysql2": "^3.6.5",
     "sweetalert2": "^11.10.1"
   }
 }

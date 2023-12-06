@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const ipc = ipcMain;
 const path = require('node:path');  // Importa el módulo 'path'
+const { checkConnection, pool } = require('./js/controladores/database');
 
 
 const createWindow = () => {
@@ -41,9 +42,12 @@ const createWindow = () => {
 }
 
 
-app.whenReady().then(() => {
-  createWindow()
-})
+app.whenReady().then(async () => {
+  // Verifica la conexión antes de crear la ventana principal
+  await checkConnection();
+
+  createWindow();
+});
 
 app.on('window-all-closed', () => {
 
@@ -55,5 +59,6 @@ app.on('activate', () => {
 })
 
 ipcMain.on('closeApp', () => {
+  pool.end();
   app.quit();
 });
