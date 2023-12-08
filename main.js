@@ -1,8 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const ipc = ipcMain;
 const path = require('node:path');  // Importa el módulo 'path'
-const { checkConnection, pool } = require('./js/controladores/database');
-
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -24,8 +22,8 @@ const createWindow = () => {
   win.loadFile('index.html')
 
   var splash = new BrowserWindow({ 
-    width: 1280, 
-    height: 850, 
+    width: 500, 
+    height: 250, 
     transparent: true, 
     frame: false, 
     alwaysOnTop: true,
@@ -39,12 +37,31 @@ const createWindow = () => {
     win.center();
     win.show();
   }, 5000);
+  ipcMain.on('mostrar-empleados', () => {
+    win.close();
+    createEmpleadosWindow();
+  });
 }
 
+function createEmpleadosWindow() {
+  empleadosWindow = new BrowserWindow({
+      width: 1088,
+      height: 695,
+      transparent: true, 
+    frame: false, 
+    alwaysOnTop: true,
+    resizable: false,
+      webPreferences: {
+          nodeIntegration: true,
+          contextIsolation: false,
+      },
+  });
+
+  empleadosWindow.loadFile(path.join(__dirname, 'views/empleados.html'));
+}
 
 app.whenReady().then(async () => {
   // Verifica la conexión antes de crear la ventana principal
-  await checkConnection();
 
   createWindow();
 });
@@ -59,6 +76,6 @@ app.on('activate', () => {
 })
 
 ipcMain.on('closeApp', () => {
-  pool.end();
   app.quit();
 });
+
